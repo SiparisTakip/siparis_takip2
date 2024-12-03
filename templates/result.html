@@ -1,6 +1,8 @@
 <!DOCTYPE html>
-<html>
+<html lang="tr">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kargo Bilgileri</title>
     <style>
         body {
@@ -56,6 +58,23 @@
         .status.orange {
             color: orange;
         }
+
+        /* Media Queries for Responsive Design */
+        @media screen and (max-width: 600px) {
+            table {
+                width: 95%; /* Mobile uyumlu tablo genişliği */
+            }
+            th, td {
+                padding: 8px; /* Daha küçük hücreler */
+            }
+            h1 {
+                font-size: 1.5em; /* Başlık boyutunu küçült */
+            }
+            .status {
+                font-size: 1em; /* Durum metnini küçült */
+                width: 90%; /* Mobilde durumu daha büyük yapmak */
+            }
+        }
     </style>
 </head>
 <body>
@@ -79,28 +98,29 @@
     </table>
 
     <div class="status 
-        {% if son_durum == "TESLİM EDİLDİ" and gonderi_tip == "NORMAL" %}
+        {% if son_durum == 'TESLİM EDİLDİ' and gonderi_tip == 'NORMAL' %}
         green
-        {% elif son_durum == "YOLDA" %}
+        {% elif son_durum == 'YOLDA' %}
         blue
-        {% elif gonderi_tip == "İADE" %}
+        {% elif gonderi_tip == 'İADE' %}
         red
-        {% elif son_durum == "TESLİMATTA" and gonderi_tip == "NORMAL" %}
+        {% elif son_durum == 'TESLİMATTA' and gonderi_tip == 'NORMAL' %}
         green
         {% else %}
         orange
         {% endif %}">
-        {% if son_durum == "TESLİM EDİLDİ" and gonderi_tip == "NORMAL" %}
+        {% if son_durum == 'TESLİM EDİLDİ' and gonderi_tip == 'NORMAL' %}
         Kargonuz Teslim Edildi
-        {% elif son_durum == "YOLDA" %}
-        Kargonuz Yolda En Kısa Sürede Size Ulaşacaktır 
-        {% elif gonderi_tip == "İADE" %}
+        {% elif son_durum == 'YOLDA' %}
+        Kargonuz Yolda En Kısa Sürede Size Ulaşacaktır
+        {% elif gonderi_tip == 'İADE' %}
         Kargonuz İade Ediliyor
-        {% elif son_durum == "TESLİMATTA" and gonderi_tip == "NORMAL" %}
+        {% elif son_durum == 'TESLİMATTA' and gonderi_tip == 'NORMAL' %}
         Kargonuz Dağıtımda
         {% else %}
         Kargonuz Şubede
         {% endif %}
     </div>
+
 </body>
 </html>
