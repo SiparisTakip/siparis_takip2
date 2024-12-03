@@ -69,7 +69,7 @@ def index():
 
             takip_kodu = arama(takip)
             if not takip_kodu:
-                return "Telefon Numarası bulunamadı."
+                return render_template("index.html", error_message="Takip numarası bulunamadı. Lütfen geçerli bir numara girin!")
 
             # Aras Kargo işlemleri
             url1 = f"https://kargotakip.araskargo.com.tr/mainpage.aspx?code={takip_kodu}"
@@ -107,8 +107,7 @@ def index():
                 }
 
                 return render_template("result.html", bilgiler=bilgiler, son_durum=son_durum, gonderi_tip=gonderi_tip)
-
-        return render_template("index.html", error_message="Takip numarası bulunamadı. Lütfen geçerli bir numara girin!")
+        
 
     return render_template("index.html")
 
