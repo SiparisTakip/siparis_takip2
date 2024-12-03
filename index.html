@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Kargo Takip</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .container {
+            text-align: center;
+            background: #fff;
+            padding: 20px 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        }
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        form {
+            margin-top: 15px;
+        }
+        input[type="text"] {
+            width: 80%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 16px;
+        }
+        button {
+            background-color: #2c3e50;
+            color: #fff;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #34495e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Kargo Takip Sistemi</h1>
+        <h2>Telefon Numaranızı Yazın</h2>
+        <form method="post">
+            <input type="text" name="takip_no" placeholder="Telefon Numarası" required>
+            <button type="submit">Sorgula</button>
+        </form>
+    {% if error_message %}
+    <p style="color: red;">{{ error_message }}</p>
+    {% endif %}    
+    </div>
+
+</body>
+</html>
