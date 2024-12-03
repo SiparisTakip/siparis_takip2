@@ -1,4 +1,4 @@
-from flask import Flask, request, render_template_string, jsonify
+from flask import Flask, request, render_template, jsonify
 import requests
 from bs4 import BeautifulSoup as BS
 from datetime import datetime, timedelta
@@ -9,185 +9,6 @@ kullanici_Adi = "seffafbutik@yesilkar.com"
 sifre = "Ma123456"
 app = Flask(__name__)
 
-result_html =""" 
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Kargo Bilgileri</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            background-color: #f4f4f9;
-            color: #333;
-        }
-        h1 {
-            text-align: center;
-            margin: 20px 0;
-            color: #2c3e50;
-        }
-        table {
-            width: 80%;
-            margin: 20px auto;
-            border-collapse: collapse;
-            background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 12px;
-            text-align: left;
-        }
-        th {
-            background-color: #2c3e50;
-            color: #fff;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        tr:hover {
-            background-color: #f1f1f1;
-        }
-        .status {
-            text-align: center;
-            margin: 20px auto;
-            font-size: 1.2em;
-            font-weight: bold;
-            width: 80%;
-        }
-        .status.green {
-            color: green;
-        }
-        .status.blue {
-            color: blue;
-        }
-        .status.red {
-            color: red;
-        }
-        .status.orange {
-            color: orange;
-        }
-    </style>
-</head>
-<body>
-    <h1>Kargo Bilgileri</h1>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Bilgi</th>
-                <th>Değer</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for key, value in bilgiler.items() %}
-            <tr>
-                <td><b>{{ key }}</b></td>
-                <td>{{ value }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-
-    <div class="status 
-        {% if son_durum == "TESLİM EDİLDİ" and gonderi_tip == "NORMAL" %}
-        green
-        {% elif son_durum == "YOLDA" %}
-        blue
-        {% elif gonderi_tip == "İADE" %}
-        red
-        {% elif son_durum == "TESLİMATTA" and gonderi_tip == "NORMAL" %}
-        green
-        {% else %}
-        orange
-        {% endif %}">
-        {% if son_durum == "TESLİM EDİLDİ" and gonderi_tip == "NORMAL" %}
-        Kargonuz Teslim Edildi
-        {% elif son_durum == "YOLDA" %}
-        Kargonuz Yolda En Kısa Sürede Size Ulaşacaktır 
-        {% elif gonderi_tip == "İADE" %}
-        Kargonuz İade Ediliyor
-        {% elif son_durum == "TESLİMATTA" and gonderi_tip == "NORMAL" %}
-        Kargonuz Dağıtımda
-        {% else %}
-        Kargonuz Şubede
-        {% endif %}
-    </div>
-</body>
-</html>
-
-"""
-
-index_html = """
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Kargo Takip</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background-color: #f4f4f9;
-        }
-        .container {
-            text-align: center;
-            background: #fff;
-            padding: 20px 30px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        h1 {
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-        form {
-            margin-top: 15px;
-        }
-        input[type="text"] {
-            width: 80%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            font-size: 16px;
-        }
-        button {
-            background-color: #2c3e50;
-            color: #fff;
-            border: none;
-            padding: 10px 20px;
-            font-size: 16px;
-            border-radius: 5px;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-        }
-        button:hover {
-            background-color: #34495e;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <h1>Kargo Takip Sistemi</h1>
-        <h2>Telefon Numaranızı Yazın</h2>
-        <form method="post">
-            <input type="text" name="takip_no" placeholder="Telefon Numarası" required>
-            <button type="submit">Sorgula</button>
-        </form>
-    {% if error_message %}
-    <p style="color: red;">{{ error_message }}</p>
-    {% endif %}    
-    </div>
-
-</body>
-</html>
-"""
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
@@ -285,11 +106,11 @@ def index():
                     "Aras KARGO Takip Kodu":veriler[4]
                 }
 
-                return render_template_string(result_html, bilgiler=bilgiler, son_durum=son_durum, gonderi_tip=gonderi_tip)
+                return render_template("result.html", bilgiler=bilgiler, son_durum=son_durum, gonderi_tip=gonderi_tip)
 
-        return render_template_string(result_html, error_message="Takip numarası bulunamadı. Lütfen geçerli bir numara girin!")
+        return render_template("index.html", error_message="Takip numarası bulunamadı. Lütfen geçerli bir numara girin!")
 
-    return render_template_string(index_html)
+    return render_template("index.html")
 
 
 if __name__ == "__main__":
