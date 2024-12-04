@@ -6,7 +6,7 @@
     <title>Kargo Bilgileri</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
+            font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 0;
             background-color: #f4f4f9;
@@ -16,13 +16,16 @@
             text-align: center;
             margin: 20px 0;
             color: #2c3e50;
+            font-size: 2em;
+            font-weight: bold;
         }
         table {
             width: 80%;
             margin: 20px auto;
             border-collapse: collapse;
             background-color: #fff;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
         }
         th, td {
             border: 1px solid #ddd;
@@ -32,6 +35,11 @@
         th {
             background-color: #2c3e50;
             color: #fff;
+            font-size: 1.1em;
+        }
+        td {
+            font-size: 1.2em;
+            color: #555;
         }
         tr:nth-child(even) {
             background-color: #f9f9f9;
@@ -40,41 +48,32 @@
             background-color: #f1f1f1;
         }
         .status {
-            text-align: center;
-            margin: 20px auto;
-            font-size: 1.2em;
-            font-weight: bold;
-            width: 80%;
-        }
-        .status.green {
-            color: green;
-        }
-        .status.blue {
-            color: blue;
-        }
-        .status.red {
-            color: red;
-        }
-        .status.orange {
-            color: orange;
-        }
+    text-align: center;
+    margin: 20px auto;
+    font-size: 1.5em;
+    font-weight: bold;
+    width: 80%;
+    padding: 15px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center; /* İçeriği dikey olarak ortalar */
+    margin-top: 30px; /* Üstten biraz boşluk */
+}
 
-        /* Media Queries for Responsive Design */
-        @media screen and (max-width: 600px) {
-            table {
-                width: 95%; /* Mobile uyumlu tablo genişliği */
-            }
-            th, td {
-                padding: 8px; /* Daha küçük hücreler */
-            }
-            h1 {
-                font-size: 1.5em; /* Başlık boyutunu küçült */
-            }
-            .status {
-                font-size: 1em; /* Durum metnini küçült */
-                width: 90%; /* Mobilde durumu daha büyük yapmak */
-            }
-        }
+@media screen and (max-width: 600px) {
+    .status {
+        font-size: 1.2em;
+        padding: 10px;
+        margin-top: 10px; /* Mobilde üst margin değeri azaltılabilir */
+    }
+    h1 {
+        font-size: 1.8em;
+    }
+}
+
     </style>
 </head>
 <body>
@@ -100,7 +99,9 @@
     <div class="status 
         {% if son_durum == 'TESLİM EDİLDİ' and gonderi_tip == 'NORMAL' %}
         green
-        {% elif son_durum == 'YOLDA' %}
+        {% elif supabase_takip == 'supabase' %}
+        green
+        {% elif son_durum == 'YOLDA' or 'ÇIKIŞ ŞUBESİNDE' %}
         blue
         {% elif gonderi_tip == 'İADE' %}
         red
@@ -111,14 +112,20 @@
         {% endif %}">
         {% if son_durum == 'TESLİM EDİLDİ' and gonderi_tip == 'NORMAL' %}
         Kargonuz Teslim Edildi
-        {% elif son_durum == 'YOLDA' %}
-        Kargonuz Yolda En Kısa Sürede Size Ulaşacaktır
+        {% elif supabase_takip == 'supabase' %}
+        Kargonuz İşleme Alınmıştır. Adınıza Fatura Kesildi, en hızlı sürede hazırlanıp kargoya teslim edilecektir.
+        {% elif son_durum == 'YOLDA' or 'ÇIKIŞ ŞUBESİNDE' %}
+        Kargonuz Yolda. En kısa sürede size ulaşacaktır.
         {% elif gonderi_tip == 'İADE' %}
-        Kargonuz İade Ediliyor
+        Kargonuz İade Ediliyor.
         {% elif son_durum == 'TESLİMATTA' and gonderi_tip == 'NORMAL' %}
-        Kargonuz Dağıtımda
+        Kargonuz Dağıtımda.
         {% else %}
-        Kargonuz Şubede
+        <div style="font-size: 1.5em; color: #f39c12;">Kargonuz Aras Kargo Şubesinde En Kısa Sürede Almanız Gerekiyor!</div><br>
+        <div style="font-size: 2em; font-weight: bold; color: #2c3e50;">ARAS KARGO</div>
+        <div style="font-size: 2.5em; font-weight: bold; color: #2c3e50;">{{ teslimat_sube }}</div>
+        <div style="font-size: 1.5em; font-weight: bold; color: #c0392b;">ŞUBESİNDE</div><br>
+        <p style="font-size: 1.2em; color: #555;">Telefonunuzdan Haritalara <span style="font-size: 1.2em; color: #e74c3c;">ARAS KARGO {{ teslimat_sube }}</span> yazarak konumuna ulaşabilirsiniz.</p>
         {% endif %}
     </div>
 
