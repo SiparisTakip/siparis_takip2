@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Kargo Durumu</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f9;
+        }
+        .message-container {
+            text-align: center;
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+            padding: 30px 40px;
+            border-radius: 10px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            width: 90%;
+            max-width: 600px;
+        }
+        .message-container h1 {
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+        .message-container p {
+            font-size: 1.2em;
+            line-height: 1.6;
+        }
+        .message-container span {
+            font-weight: bold;
+            color: #ffd700; /* Sarı vurgular */
+        }
+        .back-button {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: white;
+            text-decoration: none;
+            font-size: 1em;
+            font-weight: bold;
+            border-radius: 5px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            transition: background-color 0.3s ease;
+        }
+        .back-button:hover {
+            background-color: #c0392b;
+        }
+        @media screen and (max-width: 600px) {
+            .message-container h1 {
+                font-size: 1.5em;
+            }
+            .message-container p {
+                font-size: 1em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="message-container">
+        <h1>Bilgi Bekleniyor</h1>
+        <p>{{ veriler}} Kargodan bilgiler geldikçe bu ekranda <span>gözükecek</span>. <br> 
+        Lütfen <span>2 saat</span> sonra tekrar deneyiniz. Bazen yoğunluk olabiliyor.</p>
+        <a href="javascript:history.back()" class="back-button">Geri Git</a>
+    </div>
+</body>
+</html>
