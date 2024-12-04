@@ -69,7 +69,7 @@ def index():
 
             takip_kodu = arama(takip)
             if not takip_kodu:
-                return "Telefon Numarası bulunamadı."
+                return f"{veriler[5] } Kargodan Bilgiler Geldikce Bu ekranda Gözükecek 2 saat sonra tekrar deneyiniz Bazen yogunluk olabiliyor."
 
             # Aras Kargo işlemleri
             url1 = f"https://kargotakip.araskargo.com.tr/mainpage.aspx?code={takip_kodu}"
