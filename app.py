@@ -3,15 +3,22 @@ import requests
 from bs4 import BeautifulSoup as BS
 from datetime import datetime, timedelta
 import pandas as pd
+from supabase import create_client, Client
 
-
+url = "https://ezyhoocwfrocaqsehler.supabase.co"
+key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6eWhvb2N3ZnJvY2Fxc2VobGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjcyOTkzOTUsImV4cCI6MjA0Mjg3NTM5NX0.3A2pCuleW0RnGIlCaM5pALWw8fB_KW_y2-qsIJ1_FJI"
+supabase_DB = "siparislistesi"
+#kargo kullanıcı adı şifre ve kargo kodu
 kullanici_Adi = "seffafbutik@yesilkar.com"
 sifre = "Ma123456"
+# Supabase Client oluştur
+supabase: Client = create_client(url, key)
 app = Flask(__name__)
 
 @app.route("/", methods=["GET", "POST"])
 def index():
     if request.method == "POST":
+      try:  
         takip = request.form.get("takip_no")
         if len(takip) == 11:
             tarih_baslangic = datetime.now() - timedelta(days=15)
@@ -69,8 +76,7 @@ def index():
 
             takip_kodu = arama(takip)
             if not takip_kodu:
-                return f"{veriler[5] } Kargodan Bilgiler Geldikce Bu ekranda Gözükecek 2 saat sonra tekrar deneyiniz Bazen yogunluk olabiliyor."
-
+                return render_template("takipyok.html",veriler = veriler[5])
             # Aras Kargo işlemleri
             url1 = f"https://kargotakip.araskargo.com.tr/mainpage.aspx?code={takip_kodu}"
             response = requests.get(url1, headers=headers)
@@ -106,12 +112,29 @@ def index():
                     "Aras KARGO Takip Kodu":veriler[4]
                 }
 
-                return render_template("result.html", bilgiler=bilgiler, son_durum=son_durum, gonderi_tip=gonderi_tip)
+                return render_template("result.html", bilgiler=bilgiler, son_durum=son_durum, gonderi_tip=gonderi_tip, teslimat_sube=teslimat_sube)
 
         return render_template("index.html", error_message="Takip numarası bulunamadı. Lütfen geçerli bir numara girin! ")
-
+      except (AttributeError, requests.exceptions.RequestException) as e:
+               # except AttributeError or requests.exceptions.RequestException:             
+        print("Tablo bulunamadı. Alternatif işlem yapılıyor.")   
+        data = supabase.table(supabase_DB).select("*").eq("TELEFON",takip).execute()
+        data = pd.DataFrame(data.data)
+        if not data.empty:
+            
+                    bilgiler = {
+                                "Alıcı Adı": data["İSİM SOYİSİM"].iloc[0],
+                                "Adres": data["ADRES"].iloc[0],
+                                "İl - İlçe": data["İL"].iloc[0] +" "+ data["İLÇE"].iloc[0],
+                                "Telefon": data["TELEFON"].iloc[0]
+                }
+                    
+        else:
+           return render_template("index.html", error_message="Takip numarası bulunamadı. Lütfen geçerli bir numara girin! ")
+        
+        return render_template("result.html", bilgiler=bilgiler,supabase_takip = "supabase")   
     return render_template("index.html")
-
+  
 
 if __name__ == "__main__":
     app.run(debug=True)
