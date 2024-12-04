@@ -32,7 +32,7 @@ def index():
 
                 # Giriş form verileri ve token değerini al
             form_data = {
-                    "token": bs.find('input', att rs={'name': 'token'})['value'],
+                    "token": bs.find('input', attrs={'name': 'token'})['value'],
                     "return_url": "/",
                     "email": kullanici_Adi,
                     "password": sifre
@@ -69,7 +69,7 @@ def index():
 
             takip_kodu = arama(takip)
             if not takip_kodu:
-                return f"{veriler[5] }Kargodan Bilgiler Geldikçe Bu Ekran'da Gösterilecektir 2 Saat Sonra Tekrar Deneyiniz"
+                return "Telefon Numarası bulunamadı."
 
             # Aras Kargo işlemleri
             url1 = f"https://kargotakip.araskargo.com.tr/mainpage.aspx?code={takip_kodu}"
