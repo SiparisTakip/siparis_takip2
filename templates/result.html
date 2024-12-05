@@ -48,32 +48,49 @@
             background-color: #f1f1f1;
         }
         .status {
-    text-align: center;
-    margin: 20px auto;
-    font-size: 1.5em;
-    font-weight: bold;
-    width: 80%;
-    padding: 15px;
-    border-radius: 8px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center; /* İçeriği dikey olarak ortalar */
-    margin-top: 30px; /* Üstten biraz boşluk */
-}
+            text-align: center;
+            margin: 20px auto;
+            font-size: 1.5em;
+            font-weight: bold;
+            width: 80%;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+        .status.green {
+            background-color: #27ae60;
+            color: white;
+        }
+        .status.blue {
+            background-color: #3498db;
+            color: white;
+        }
+        .status.red {
+            background-color: #e74c3c;
+            color: white;
+        }
+        .status.orange {
+            background-color: #f39c12;
+            color: white;
+        }
 
-@media screen and (max-width: 600px) {
-    .status {
-        font-size: 1.2em;
-        padding: 10px;
-        margin-top: 10px; /* Mobilde üst margin değeri azaltılabilir */
-    }
-    h1 {
-        font-size: 1.8em;
-    }
-}
-
+        /* Media Queries for Responsive Design */
+        @media screen and (max-width: 600px) {
+            table {
+                width: 95%;
+            }
+            th, td {
+                padding: 10px;
+                font-size: 1em;
+            }
+            h1 {
+                font-size: 1.8em;
+            }
+            .status {
+                font-size: 1.2em;
+                padding: 10px;
+            }
+        }
     </style>
 </head>
 <body>
@@ -101,7 +118,7 @@
         green
         {% elif supabase_takip == 'supabase' %}
         green
-        {% elif son_durum == 'YOLDA' or 'ÇIKIŞ ŞUBESİNDE' %}
+        {% elif son_durum == 'YOLDA' or son_durum == 'ÇIKIŞ ŞUBESİNDE' %}
         blue
         {% elif gonderi_tip == 'İADE' %}
         red
@@ -114,14 +131,14 @@
         Kargonuz Teslim Edildi
         {% elif supabase_takip == 'supabase' %}
         Kargonuz İşleme Alınmıştır. Adınıza Fatura Kesildi, en hızlı sürede hazırlanıp kargoya teslim edilecektir.
-        {% elif son_durum == 'YOLDA' or 'ÇIKIŞ ŞUBESİNDE' %}
+        {% elif son_durum == 'YOLDA' or son_durum == 'ÇIKIŞ ŞUBESİNDE' %}
         Kargonuz Yolda. En kısa sürede size ulaşacaktır.
         {% elif gonderi_tip == 'İADE' %}
         Kargonuz İade Ediliyor.
         {% elif son_durum == 'TESLİMATTA' and gonderi_tip == 'NORMAL' %}
         Kargonuz Dağıtımda.
         {% else %}
-        <div style="font-size: 1.5em; color: #f39c12;">Kargonuz Aras Kargo Şubesinde En Kısa Sürede Almanız Gerekiyor!</div><br>
+        <div style="font-size: 1.5em; color: #2c3e50;">Kargonuz Aras Kargo Şubesinde En Kısa Sürede Almanız Gerekiyor!</div><br>
         <div style="font-size: 2em; font-weight: bold; color: #2c3e50;">ARAS KARGO</div>
         <div style="font-size: 2.5em; font-weight: bold; color: #2c3e50;">{{ teslimat_sube }}</div>
         <div style="font-size: 1.5em; font-weight: bold; color: #c0392b;">ŞUBESİNDE</div><br>
