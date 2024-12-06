@@ -103,8 +103,7 @@ def index():
                 gonderi_tip = soup.find("span", {"id": "LabelGonTipi"}).text
 
                 bilgiler = {
-                    "Alıcı Adı": alici_adi,
-                    "Çıkış Şube": cıkıs_sube,
+                    "Alıcı Adı": alici_adi,                    
                     "Teslimat Şube": teslimat_sube,
                     "Gönderim Tarihi": gonderim_tarihi,
                     "Kargo Son Durum": son_durum,
