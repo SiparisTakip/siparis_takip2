@@ -73,10 +73,16 @@ def index():
                 if not sonuc.empty:
                     return sonuc.iloc[0]["TAKİP KODU"]
                 return None
-
+            Takipyok_bilgiler = {
+                    "Alıcı Adı": veriler[5],                    
+                    "Teslimat Şube": "ARAS KARGO",
+                    "Kargo Son Durum": "PAKET YAPILDI",                    
+                    "İL-İLÇE":veriler[6] + " " + veriler[7] ,
+                    "Ücret": veriler[13] + "TL"
+                }
             takip_kodu = arama(takip)
             if not takip_kodu:
-                return render_template("takipyok.html",veriler = veriler[5])
+                return render_template("takipyok.html",veriler = veriler[5],bilgiler1=Takipyok_bilgiler)
             # Aras Kargo işlemleri
             url1 = f"https://kargotakip.araskargo.com.tr/mainpage.aspx?code={takip_kodu}"
             response = requests.get(url1, headers=headers)
