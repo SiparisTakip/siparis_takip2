@@ -4,7 +4,7 @@ from bs4 import BeautifulSoup as BS
 from datetime import datetime, timedelta
 import pandas as pd
 from supabase import create_client, Client
-
+import re
 url = "https://ezyhoocwfrocaqsehler.supabase.co"
 key = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV6eWhvb2N3ZnJvY2Fxc2VobGVyIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjcyOTkzOTUsImV4cCI6MjA0Mjg3NTM5NX0.3A2pCuleW0RnGIlCaM5pALWw8fB_KW_y2-qsIJ1_FJI"
 supabase_DB = "siparislistesi"
@@ -107,7 +107,23 @@ def index():
                 son_durum = soup.find("span", {"id": "Son_Durum"}).text
                 alici_adi = soup.find("span", {"id": "alici_adi_soyadi"}).text
                 gonderi_tip = soup.find("span", {"id": "LabelGonTipi"}).text
+                response=requests.get(link_cikti)
+                soup=BS(response.text,"html5lib")
+                tablo = soup.find("table").findAll("tr")
+                sonuçlar = []
+                for td in tablo[0:2]:
+                    metin = td.text  # <td> içindeki metni al
+                    # Regex ile parçala
+                    pattern = r"(\d{1,2}\.\d{1,2}\.\d{4} \d{2}:\d{2}:\d{2})([A-ZŞĞİÜÖÇ]+)([A-ZŞĞİÜÖÇ ]+)"
+                    matches = re.findall(pattern, metin)
 
+                    for match in matches:
+                        tarih_saat, il, birim_islem = match
+                        sonuçlar.append({
+                            "Tarih/Saat": tarih_saat,
+                            "İl": il,
+                            "Birim/İşlem": birim_islem.strip()
+                        })
                 bilgiler = {
                     "Alıcı Adı": alici_adi,                    
                     "Teslimat Şube": teslimat_sube,
@@ -117,7 +133,7 @@ def index():
                     "Aras KARGO Takip Kodu":veriler[4]
                 }
 
-                return render_template("result.html", bilgiler=bilgiler, son_durum=son_durum, gonderi_tip=gonderi_tip, teslimat_sube=teslimat_sube)
+                return render_template("result.html", bilgiler=bilgiler, son_durum=son_durum, gonderi_tip=gonderi_tip, teslimat_sube=teslimat_sube, sonuçlar=sonuçlar)
 
         return render_template("index.html", error_message="Takip numarası bulunamadı. Lütfen geçerli bir numara girin! ")
       except (AttributeError, requests.exceptions.RequestException) as e:
