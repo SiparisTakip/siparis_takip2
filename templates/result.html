@@ -73,7 +73,22 @@
             background-color: #f39c12;
             color: white;
         }
-
+        button {
+            display: block;
+            margin: 20px auto;
+            padding: 10px 20px;
+            font-size: 1em;
+            color: #fff;
+            background-color: #3498db;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
         /* Media Queries for Responsive Design */
         @media screen and (max-width: 600px) {
             table {
@@ -138,13 +153,49 @@
         {% elif son_durum == 'TESLİMATTA' and gonderi_tip == 'NORMAL' %}
         Kargonuz Dağıtımda.
         {% else %}
-        <div style="font-size: 1.5em; color: #2c3e50;">Kargonuz Aras Kargo Şubesinde En Kısa Sürede Almanız Gerekiyor!</div><br>
-        <div style="font-size: 2em; font-weight: bold; color: #2c3e50;">ARAS KARGO</div>
-        <div style="font-size: 2.5em; font-weight: bold; color: #2c3e50;">{{ teslimat_sube }}</div>
-        <div style="font-size: 1.5em; font-weight: bold; color: #c0392b;">ŞUBESİNDE</div><br>
-        <p style="font-size: 1.2em; color: #555;">Telefonunuzdan Haritalara <span style="font-size: 1.2em; color: #e74c3c;">ARAS KARGO {{ teslimat_sube }}</span> yazarak konumuna ulaşabilirsiniz.</p>
+        <div style="font-size: 1em; color: #2c3e50;">Kargonuz Aras Kargo Şubesinde En Kısa Sürede Almanız Gerekiyor!</div>
+        <div style="font-size: 1em; font-weight: bold; color: #2c3e50;">ARAS KARGO</div>
+        <div style="font-size: 1.5em; font-weight: bold; color: #2c3e50;">{{ teslimat_sube }}</div>
+        <div style="font-size: 1em; font-weight: bold; color: #c0392b;">ŞUBESİNDE</div>
+        <div style="font-size: 1em; color: #555;">Telefonunuzdan Haritalara <span style="font-size: 1em; color: #e74c3c;">ARAS KARGO {{ teslimat_sube }}</span> yazarak konumuna ulaşabilirsiniz.</div>
         {% endif %}
     </div>
 
+    <button id="toggleButton" onclick="toggleTable()">Tabloyu Göster</button>
+    <table id="kargoTable" border="1" style="display: none;">
+        <thead>
+            <tr>
+                <th>Tarih/Saat</th>
+                <th>İl</th>
+                <th>Birim/İşlem</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for veri in sonuçlar %}
+            <tr>
+                <td>{{ veri["Tarih/Saat"] }}</td>
+                <td>{{ veri["İl"] }}</td>
+                <td>{{ veri["Birim/İşlem"] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <script>
+        function toggleTable() {
+            const button = document.getElementById('toggleButton');
+            const table = document.getElementById('kargoTable');
+    
+            // Eğer tablo gizli ise, göster ve buton metnini değiştir
+            if (table.style.display === 'none' || table.style.display === '') {
+                table.style.display = 'table';
+                button.textContent = 'Tabloyu Gizle';
+            } else {
+                // Tablo görünürse, gizle ve buton metnini değiştir
+                table.style.display = 'none';
+                button.textContent = 'Tabloyu Göster';
+            }
+        }
+    </script>
 </body>
 </html>
