@@ -20,6 +20,14 @@ def index():
     if request.method == "POST":
       try:  
         takip = request.form.get("takip_no")
+        def duzenle_telefon_numarasi(takip):
+            takip = takip.replace(" ", "")            
+            # Başında sıfır yoksa sıfır ekle
+            if not takip.startswith("0"):
+                takip = "0" + takip            
+            return takip    
+            
+        takip = duzenle_telefon_numarasi(takip)             
         if len(takip) == 11:
             tarih_baslangic = datetime.now() - timedelta(days=15)
             tarih_bitis = datetime.now().strftime("%d.%m.%Y")
