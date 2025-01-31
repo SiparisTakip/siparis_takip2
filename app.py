@@ -29,70 +29,54 @@ def index():
             
         takip = duzenle_telefon_numarasi(takip)             
         if len(takip) == 11:
-            tarih_baslangic = datetime.now() - timedelta(days=15)
-            tarih_bitis = datetime.now().strftime("%d.%m.%Y")
-            tarih_baslangic = tarih_baslangic.strftime("%d.%m.%Y")
+            api_url = "http://webpostman.yesilkarkargo.com:9999/restapi/client/cargo"
 
-            # Giriş ve verilerin alınması
-            login_link = "https://webpostman.yesilkarkargo.com/user/login"
+            # API Key ve Kullanıcı E-postası
+            api_key = "apRFMXVkh5sKDnyCEqmGrASxTHOc4d71BgzZJ9Y0"
+            user_email = "seffafbutik@yesilkar.com"
+
+            # HTTP Başlıkları
             headers = {
-                    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36 OPR/107.0.0.0'
-                }
+                "Authorization": api_key,
+                "From": user_email
+            }
+            # İsteğe bağlı parametreler (Örneğin belirli bir barkodu sorgulamak için)
+            params = {
+            "sipno" : takip
+            }
+            # GET isteği gönder
+            response = requests.get(api_url, headers=headers, params=params)
 
-                # Giriş isteği yap
-            login_response = requests.get(login_link, headers=headers)
+            # Yanıtı kontrol et
+            
+            json_data = response.json()
+            # "data" anahtarındaki ilk öğeden "gonderino" değerini al
+            if "data" in json_data and len(json_data["data"]) > 0:
+                gonderino = json_data["data"][0]["cikisno"]
+                ad = json_data["data"][0]["aliciadi"]
+                soyad = json_data["data"][0]["alicisoyad"]
+                tutar = json_data["data"][0]["tutar"]
+                il = json_data["data"][0]["sehiradi"]
+                ilce = json_data["data"][0]["ilce"]
+                Takipyok_bilgiler = {
+                "Alıcı Adı": ad + " " + soyad ,                    
+                "Teslimat Şube": "ARAS KARGO",
+                "Kargo Son Durum": "PAKET YAPILDI",                    
+                "İL-İLÇE": il + " " + ilce ,
+                "Ücret": tutar + "TL"
+                    }
+        # Telefon numarasına göre arama
+            
+                if gonderino == '' :
+                    return render_template("takipyok.html",veriler = "ad" , bilgiler1=Takipyok_bilgiler)
+            else :
+             raise ValueError("API'den veri gelmedi veya kayıt bulunamadı!")
+      
+  
 
-                # BeautifulSoup ile HTML'i ayrıştır
-            bs = BS(login_response.content, 'html5lib')
-
-                # Giriş form verileri ve token değerini al
-            form_data = {
-                    "token": bs.find('input', attrs={'name': 'token'})['value'],
-                    "return_url": "/",
-                    "email": kullanici_Adi,
-                    "password": sifre
-                }
-
-
-
-            giris = requests.post(login_link, headers=headers, data=form_data,cookies=login_response.cookies)
-            kullanici = BS(giris.content, "html.parser")
-            cookie = login_response.cookies
-            cargo_link = f"https://webpostman.yesilkarkargo.com/cargo/?alim_start={tarih_baslangic}&alim_end={tarih_bitis}&durums=-1&teslim_start=&teslim_end=&barkod=&isim=&soyisim=&seh_kod=0&ilce=&sipno={takip}&telno=&d_trbkod=0&d_subekod=0&btnSubmit=btnSubmit"
-            cargo_response = requests.get(cargo_link, cookies=cookie)
-            cargo_bs = BS(cargo_response.content, "html5lib")
-            tablo = cargo_bs.find("table", {"id": "generalTables"}).find("tbody").find_all("tr")
-            liste = []
-            for satir in tablo:
-                    sütunlar = satir.find_all("td")
-                    veriler = [sütun.get_text(strip=True) for sütun in sütunlar]
-                    liste.append({"TAKİP KODU":veriler[4], 
-                    "İSİM SOYİSİM":veriler[5],
-                    "TELEFON NU":"0"+veriler[19],
-                    "SONUÇ":veriler[9],
-                    "KARGO ŞUBESİ":veriler[10],
-                    "ÜCRET":veriler[13]+" TL" ,
-                    "siparis_takip": veriler[18] })
-            df = pd.DataFrame(liste)
-
-            # Telefon numarasına göre arama
-            def arama(telefon_numarasi):
-                sonuc = df[df["siparis_takip"] == telefon_numarasi]
-                if not sonuc.empty:
-                    return sonuc.iloc[0]["TAKİP KODU"]
-                return None
-            Takipyok_bilgiler = {
-                    "Alıcı Adı": veriler[5],                    
-                    "Teslimat Şube": "ARAS KARGO",
-                    "Kargo Son Durum": "PAKET YAPILDI",                    
-                    "İL-İLÇE":veriler[6] + " " + veriler[7] ,
-                    "Ücret": veriler[13] + "TL"
-                }
-            takip_kodu = arama(takip)
-            if not takip_kodu:
-                return render_template("takipyok.html",veriler = veriler[5],bilgiler1=Takipyok_bilgiler)
+                
             # Aras Kargo işlemleri
-            url1 = f"https://kargotakip.araskargo.com.tr/mainpage.aspx?code={takip_kodu}"
+            url1 = f"https://kargotakip.araskargo.com.tr/mainpage.aspx?code={gonderino}"
             response = requests.get(url1, headers=headers)
             soup = BS(response.content, "html5lib")
             link_veri = soup.findAll("a")
@@ -138,13 +122,14 @@ def index():
                     "Gönderim Tarihi": gonderim_tarihi,
                     "Kargo Son Durum": son_durum,
                     "Gönderi Tipi": gonderi_tip,
-                    "Aras KARGO Takip Kodu":veriler[4]
+                    "Aras KARGO Takip Kodu":gonderino
                 }
 
                 return render_template("result.html", bilgiler=bilgiler, son_durum=son_durum, gonderi_tip=gonderi_tip, teslimat_sube=teslimat_sube, sonuçlar=sonuçlar)
 
         return render_template("index.html", error_message="Takip numarası bulunamadı. Lütfen geçerli bir numara girin! ")
-      except (AttributeError, requests.exceptions.RequestException) as e:
+      
+      except (IndexError, KeyError, ValueError) as e:  
                # except AttributeError or requests.exceptions.RequestException:             
         print("Tablo bulunamadı. Alternatif işlem yapılıyor.")   
         data = supabase.table(supabase_DB).select("*").eq("TELEFON",takip).execute()
