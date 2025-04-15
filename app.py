@@ -32,7 +32,7 @@ def index():
             api_url = "http://webpostman.yesilkarkargo.com:9999/restapi/client/cargo"
 
             # API Key ve Kullanıcı E-postası
-            api_key = "apRFMXVkh5sKDnyCEqmGrASxTHOc4d71BgzZJ9Y0"
+            api_key = "jE6csb3PTtLYAdya87Bnp91G0NJfMSCXUZxmHz4r"
             user_email = "seffafbutik@yesilkar.com"
 
             # HTTP Başlıkları
