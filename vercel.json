@@ -3,13 +3,34 @@
   "builds": [
     {
       "src": "api/index.py",
-      "use": "@vercel/python"
+      "use": "@vercel/python",
+      "config": {
+        "maxLambdaSize": "15mb"
+      }
     }
   ],
   "routes": [
     {
+      "src": "/health",
+      "dest": "api/index.py"
+    },
+    {
+      "src": "/warmup",
+      "dest": "api/index.py"
+    },
+    {
       "src": "/(.*)",
       "dest": "api/index.py"
     }
-  ]
+  ],
+  "env": {
+    "SUPABASE_URL": "https://ezyhoocwfrocaqsehler.supabase.co",
+    "SUPABASE_KEY": "@supabase-key"
+  },
+  "functions": {
+    "api/index.py": {
+      "memory": 1024,
+      "maxDuration": 10
+    }
+  }
 }
