@@ -2,10 +2,18 @@ from flask import Flask, request, render_template, jsonify
 import requests
 from bs4 import BeautifulSoup as BS
 from datetime import datetime, timedelta
-from supabase import create_client, Client
 import re
 import os
 import logging
+
+# Supabase import - versiyon kontrolü ile
+try:
+    from supabase import create_client, Client
+    SUPABASE_AVAILABLE = True
+except ImportError:
+    SUPABASE_AVAILABLE = False
+    logger = logging.getLogger(__name__)
+    logger.error("Supabase import hatası!")
 
 # Logging ayarları
 logging.basicConfig(level=logging.INFO)
@@ -24,12 +32,20 @@ CARGO_USER_EMAIL = "seffafbutik@yesilkar.com"
 # Global Supabase client (ÇOOOK ÖNEMLİ!)
 _supabase_client = None
 
-def get_supabase() -> Client:
+def get_supabase():
     """Singleton pattern ile Supabase client"""
     global _supabase_client
     if _supabase_client is None:
-        _supabase_client = create_client(SUPABASE_URL, SUPABASE_KEY)
-        logger.info("Supabase client oluşturuldu")
+        try:
+            # Minimal config ile client oluştur
+            _supabase_client = create_client(
+                supabase_url=SUPABASE_URL,
+                supabase_key=SUPABASE_KEY
+            )
+            logger.info("Supabase client oluşturuldu")
+        except Exception as e:
+            logger.error(f"Supabase client hatası: {e}")
+            raise
     return _supabase_client
 
 app = Flask(__name__, template_folder="../templates")
